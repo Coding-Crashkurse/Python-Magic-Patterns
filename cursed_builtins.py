@@ -1,32 +1,21 @@
 import builtins
 from contextlib import contextmanager
-from typing import Iterator
 
 
 @contextmanager
-def shell_prompt(prompt: str = "$ ") -> Iterator[None]:
-    """Temporarily prefix all print output with a shell-like prompt."""
-    original_print = builtins.print
-
-    def prefixed_print(*args, **kwargs):
-        sep = kwargs.get("sep", " ")
-        text = sep.join(map(str, args))
-        original_print(prompt + text, **kwargs)
-
-    builtins.print = prefixed_print
+def curse_print(prefix=" "):
+    orig = builtins.print
+    def cursed_print(*a, **kw):
+        orig(prefix + " ".join(map(str, a)), **kw)
+    builtins.print = cursed_print
     try:
         yield
     finally:
-        builtins.print = original_print
+        builtins.print = orig
 
 
-def main() -> None:
-    print("normal")
-    with shell_prompt():
-        print("cat logs.txt | rg ERROR | head -n 1")
-        print("ERROR: disk full")
-    print("normal")
-
-
-if __name__ == "__main__":
-    main()
+print("normal")
+with curse_print():
+    print("this looks haunted")
+    print("even this")
+print("normal again")
