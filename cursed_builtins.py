@@ -6,7 +6,8 @@ from contextlib import contextmanager
 def curse_print(prefix=" "):
     orig = builtins.print
     def cursed_print(*a, **kw):
-        orig(prefix + " ".join(map(str, a)), **kw)
+        text = " ".join(map(str, a))
+        orig(prefix + text[::-1], **kw)
     builtins.print = cursed_print
     try:
         yield
